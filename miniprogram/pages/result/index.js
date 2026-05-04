@@ -20,14 +20,22 @@ Page({
       return;
     }
 
-    const problems = result.problems || [];
+    // 数据兼容处理
+    const safeResult = {
+      matchScore: result.matchScore || 0,
+      optimizedResume: result.optimizedResume || '优化内容生成失败，请重试',
+      problems: result.problems || [],
+      optimizationNotes: result.optimizationNotes || '暂无优化说明'
+    };
+
+    const problems = safeResult.problems;
     const problemsPreview = problems.slice(0, 2);
     const problemsHidden = problems.slice(2);
 
     const isBooked = wx.getStorageSync('has_booked') || false;
 
     this.setData({ 
-      result, 
+      result: safeResult, 
       problemsPreview, 
       problemsHidden,
       isBooked 
@@ -108,5 +116,10 @@ Page({
 
   onCloseSuccessModal() {
     this.setData({ showSuccessModal: false });
+  },
+
+  // 返回首页重新优化
+  onReoptimize() {
+    wx.navigateBack();
   }
 });

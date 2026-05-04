@@ -13,7 +13,6 @@ Page({
   },
 
   onLoad() {
-    // 获取用户标签
     wx.cloud.callFunction({
       name: 'getUserTag',
       data: { action: 'get' }
@@ -63,7 +62,24 @@ Page({
     const { jobTitle, resumeContent, canSubmit, loading } = this.data;
     if (!canSubmit || loading) return;
 
+    if (resumeContent.length > 8000) {
+      wx.showModal({
+        title: '提示',
+        content: '简历内容过长（超过8000字），可能导致优化效果下降，是否继续？',
+        success: (res) => {
+          if (res.confirm) this.doSubmit();
+        }
+      });
+      return;
+    }
+
+    this.doSubmit();
+  },
+
+  doSubmit() {
+    const { jobTitle, resumeContent } = this.data;
     const usageCount = wx.getStorageSync('resume_usage_count') || 0;
+
     if (usageCount >= 1 && !this.data.isBooked) {
       this.setData({ showBookingModal: true });
       const app = getApp();
@@ -85,7 +101,6 @@ Page({
     }).then(res => {
       const result = res.result;
       if (result.success) {
-        const app = getApp();
         app.globalData.optimizeResult = result.data;
         
         const newCount = usageCount + 1;
@@ -98,7 +113,7 @@ Page({
       }
     }).catch(err => {
       console.error('调用失败', err);
-      wx.showToast({ title: '网络异常，请重试', icon: 'none' });
+      wx.showToast({ title: '网络异常，请检查网络后重试', icon: 'none' });
     }).finally(() => {
       this.setData({ loading: false });
     });
@@ -140,5 +155,28 @@ Page({
 
   onCloseSuccessModal() {
     this.setData({ showSuccessModal: false });
+  },
+
+  // 长按标题清除缓存（测试用）
+  onClearCache() {
+    wx.showModal({
+      title: '清除缓存',
+      content: '确定要清除本地测试数据吗？（使用次数、预约状态）',
+      confirmColor: '#e54545',
+      success: (res) => {
+        if (res.confirm) {
+          wx.removeStorageSync('resume_usage_count');
+          wx.removeStorageSync('has_booked');
+          wx.removeStorageSync('optimizeResult');
+          this.setData({ isBooked: false });
+          wx.showToast({ title: '已清除', icon: 'success' });
+        }
+      }
+    });
+  },
+
+  // 跳转数据看板
+  goToAdmin() {
+    wx.navigateTo({ url: '/pages/admin/index' });
   }
 });

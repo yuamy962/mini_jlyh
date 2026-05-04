@@ -1,7 +1,8 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/result/index"
+    "pages/result/index",
+    "pages/admin/index"
   ],
   "window": {
     "backgroundColor": "#F5F6FA",

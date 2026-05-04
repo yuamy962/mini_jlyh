@@ -1,6 +1,6 @@
 <view class="container">
   <view class="header">
-    <view class="main-title">帮你拿更多面试机会的简历工具</view>
+    <view class="main-title" bindlongpress="onClearCache">帮你拿更多面试机会的简历工具</view>
     <view class="sub-title">AI 智能优化 · 问题诊断 · 成果强化</view>
   </view>
 
@@ -24,7 +24,7 @@
         bindinput="onResumeInput"
         maxlength="-1"
       />
-      <view class="word-count">{{contentLength}} 字</view>
+      <view class="word-count {{contentLength > 5000 ? 'warning' : ''}}">{{contentLength}} 字 {{contentLength > 5000 ? '(内容较长，可能影响优化效果)' : ''}}</view>
     </view>
 
     <button class="submit-btn {{canSubmit ? 'active' : ''}}" bindtap="onSubmit" disabled="{{!canSubmit || loading}}">
@@ -45,6 +45,10 @@
       <text class="feature-icon">🎯</text>
       <text class="feature-text">岗位匹配评分</text>
     </view>
+  </view>
+
+  <view class="admin-entry" bindtap="goToAdmin">
+    <text>📊 数据看板</text>
   </view>
 </view>
 

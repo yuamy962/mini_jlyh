@@ -1,0 +1,96 @@
+<view class="container">
+  <view class="header">
+    <view class="title">📊 简历优化器数据看板</view>
+    <view class="subtitle">实时查看核心转化指标</view>
+  </view>
+
+  <view class="card-grid">
+    <view class="stat-card primary">
+      <view class="stat-value">{{stats.totalUsers}}</view>
+      <view class="stat-label">总用户数</view>
+    </view>
+    <view class="stat-card">
+      <view class="stat-value">{{stats.submitCount}}</view>
+      <view class="stat-label">提交简历数</view>
+    </view>
+    <view class="stat-card">
+      <view class="stat-value">{{stats.unlockClicks}}</view>
+      <view class="stat-label">解锁点击数</view>
+    </view>
+    <view class="stat-card">
+      <view class="stat-value">{{stats.bookedUsers}}</view>
+      <view class="stat-label">预约人数</view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">📈 转化率指标</view>
+    <view class="rate-list">
+      <view class="rate-item">
+        <view class="rate-info">
+          <text class="rate-name">解锁 → 预约转化率</text>
+          <text class="rate-desc">点击解锁按钮后完成预约的比例</text>
+        </view>
+        <view class="rate-value {{stats.unlockToBookRate >= 20 ? 'good' : stats.unlockToBookRate >= 10 ? 'normal' : 'bad'}}">
+          {{stats.unlockToBookRate}}%
+        </view>
+      </view>
+      <view class="rate-item">
+        <view class="rate-info">
+          <text class="rate-name">弹窗 → 预约转化率</text>
+          <text class="rate-desc">看到弹窗后完成预约的比例</text>
+        </view>
+        <view class="rate-value {{stats.modalToBookRate >= 20 ? 'good' : stats.modalToBookRate >= 10 ? 'normal' : 'bad'}}">
+          {{stats.modalToBookRate}}%
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">📋 用户分布</view>
+    <view class="dist-list">
+      <view class="dist-item">
+        <text class="dist-name">普通用户</text>
+        <view class="dist-bar-wrap">
+          <view class="dist-bar" style="width: {{normalRate}}%;"></view>
+        </view>
+        <text class="dist-num">{{normalUsers}}</text>
+      </view>
+      <view class="dist-item">
+        <text class="dist-name">点击过付费</text>
+        <view class="dist-bar-wrap">
+          <view class="dist-bar clicked" style="width: {{clickedRate}}%;"></view>
+        </view>
+        <text class="dist-num">{{clickedOnlyUsers}}</text>
+      </view>
+      <view class="dist-item">
+        <text class="dist-name">已预约用户</text>
+        <view class="dist-bar-wrap">
+          <view class="dist-bar booked" style="width: {{bookedRate}}%;"></view>
+        </view>
+        <text class="dist-num">{{stats.bookedUsers}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">🎯 判断标准</view>
+    <view class="standard-list">
+      <view class="standard-item good">
+        <text class="standard-dot"></text>
+        <text>≥ 20% → 高潜力产品</text>
+      </view>
+      <view class="standard-item normal">
+        <text class="standard-dot"></text>
+        <text>≥ 10% → 可继续优化</text>
+      </view>
+      <view class="standard-item bad">
+        <text class="standard-dot"></text>
+        <text>< 5% → 产品或文案需调整</text>
+      </view>
+    </view>
+  </view>
+
+  <button class="refresh-btn" bindtap="loadData" loading="{{loading}}">刷新数据</button>
+</view>
