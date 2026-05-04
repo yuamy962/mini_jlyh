@@ -2,6 +2,18 @@ const cloud = require('wx-server-sdk');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 
+// 安全的查询封装
+async function safeGet(collection, query, defaultValue) {
+  try {
+    return await db.collection(collection).where(query).get();
+  } catch (e) {
+    if (e.errCode === -502005 || e.message.includes('Collection not found')) {
+      return defaultValue;
+    }
+    throw e;
+  }
+}
+
 exports.main = async (event, context) => {
   const { action, tag, usageCount } = event;
   const wxContext = cloud.getWXContext();
@@ -12,16 +24,18 @@ exports.main = async (event, context) => {
   }
 
   try {
-    const userRes = await db.collection('users')
-      .where({ _openid: openid })
-      .get();
+    const userRes = await safeGet('users', { _openid: openid }, { data: [] });
 
     if (action === 'get') {
       if (userRes.data && userRes.data.length > 0) {
         const user = userRes.data[0];
-        await db.collection('users').doc(user._id).update({
-          data: { lastVisitTime: db.serverDate() }
-        });
+        try {
+          await db.collection('users').doc(user._id).update({
+            data: { lastVisitTime: db.serverDate() }
+          });
+        } catch (e) {
+          // 更新失败不影响返回
+        }
         return { success: true, data: user };
       } else {
         const newUser = {
@@ -30,8 +44,13 @@ exports.main = async (event, context) => {
           firstVisitTime: db.serverDate(),
           lastVisitTime: db.serverDate()
         };
-        const addRes = await db.collection('users').add({ data: newUser });
-        return { success: true, data: { ...newUser, _id: addRes._id } };
+        try {
+          const addRes = await db.collection('users').add({ data: newUser });
+          return { success: true, data: { ...newUser, _id: addRes._id } };
+        } catch (e) {
+          // 集合不存在时返回内存数据
+          return { success: true, data: newUser };
+        }
       }
     }
 
@@ -42,7 +61,11 @@ exports.main = async (event, context) => {
 
       if (userRes.data && userRes.data.length > 0) {
         const user = userRes.data[0];
-        await db.collection('users').doc(user._id).update({ data: updateData });
+        try {
+          await db.collection('users').doc(user._id).update({ data: updateData });
+        } catch (e) {
+          // 更新失败不影响返回
+        }
         return { success: true, data: { ...user, ...updateData } };
       } else {
         const newUser = {
@@ -52,8 +75,12 @@ exports.main = async (event, context) => {
           lastVisitTime: db.serverDate(),
           ...updateData
         };
-        const addRes = await db.collection('users').add({ data: newUser });
-        return { success: true, data: { ...newUser, _id: addRes._id } };
+        try {
+          const addRes = await db.collection('users').add({ data: newUser });
+          return { success: true, data: { ...newUser, _id: addRes._id } };
+        } catch (e) {
+          return { success: true, data: newUser };
+        }
       }
     }
 

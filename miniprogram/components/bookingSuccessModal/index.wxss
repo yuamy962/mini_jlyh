@@ -29,8 +29,19 @@
 }
 
 .success-icon {
-  font-size: 80rpx;
   margin-bottom: 24rpx;
+}
+
+.icon-circle {
+  width: 80rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 700;
+  margin: 0 auto;
 }
 
 .success-title {
@@ -42,19 +53,20 @@
 
 .success-desc {
   font-size: 28rpx;
-  color: #666;
+  color: #6b7280;
   margin-bottom: 40rpx;
 }
 
 .success-btn {
   height: 88rpx;
   line-height: 88rpx;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
   font-size: 30rpx;
   font-weight: 600;
   border-radius: 44rpx;
   border: none;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.3);
 }
 
 .success-btn::after {

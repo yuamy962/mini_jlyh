@@ -3,127 +3,206 @@ page {
 }
 
 .container {
-  padding: 48rpx 32rpx;
+  padding: 0 32rpx 48rpx;
 }
 
+/* 顶部区域 */
 .header {
-  margin-bottom: 56rpx;
+  padding: 56rpx 0 48rpx;
+  text-align: center;
 }
 
 .main-title {
   font-size: 48rpx;
-  font-weight: 700;
+  font-weight: 800;
   color: #1a1a2e;
   margin-bottom: 16rpx;
   line-height: 1.4;
+  letter-spacing: 2rpx;
+}
+
+.main-title .highlight {
+  color: #2563eb;
 }
 
 .sub-title {
-  font-size: 28rpx;
-  color: #888;
+  font-size: 26rpx;
+  color: #9ca3af;
+  letter-spacing: 4rpx;
 }
 
-.form-section {
+/* 表单卡片 */
+.form-card {
   background: #fff;
   border-radius: 24rpx;
-  padding: 40rpx 32rpx;
-  margin-bottom: 48rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  padding: 48rpx 36rpx;
+  box-shadow: 0 8rpx 40rpx rgba(0, 0, 0, 0.08);
 }
 
 .form-item {
   margin-bottom: 36rpx;
 }
 
+.form-item:last-of-type {
+  margin-bottom: 0;
+}
+
 .label {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  color: #333;
+  color: #374151;
   margin-bottom: 16rpx;
 }
 
 .required {
-  color: #e54545;
+  color: #ef4444;
 }
 
 .input {
-  height: 88rpx;
-  background: #f8f9fa;
+  height: 96rpx;
+  background: #fff;
+  border: 2rpx solid #e5e7eb;
   border-radius: 16rpx;
-  padding: 0 24rpx;
+  padding: 0 28rpx;
   font-size: 28rpx;
-  color: #333;
+  color: #1f2937;
   box-sizing: border-box;
+}
+
+/* textarea 容器 */
+.textarea-wrap {
+  position: relative;
 }
 
 .textarea {
   height: 400rpx;
-  background: #f8f9fa;
+  background: #fff;
+  border: 2rpx solid #e5e7eb;
   border-radius: 16rpx;
-  padding: 24rpx;
+  padding: 28rpx;
   font-size: 28rpx;
-  color: #333;
+  color: #1f2937;
   width: 100%;
   box-sizing: border-box;
+  line-height: 1.6;
+}
+
+/* 一键粘贴按钮 */
+.paste-btn {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  background: #f3f4f6;
+  color: #2563eb;
+  font-size: 24rpx;
+  font-weight: 600;
+  padding: 10rpx 20rpx;
+  border-radius: 8rpx;
+  z-index: 2;
+}
+
+/* 输入引导 */
+.input-guide {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: #9ca3af;
+}
+
+/* 字数统计行 */
+.word-count-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+
+.privacy-tip {
+  font-size: 22rpx;
+  color: #6b7280;
 }
 
 .word-count {
-  text-align: right;
-  font-size: 24rpx;
-  color: #aaa;
-  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #d1d5db;
 }
 
 .word-count.warning {
-  color: #e54545;
+  color: #ef4444;
 }
 
+.word-count.too-much {
+  color: #f97316;
+}
+
+/* 信任文案 */
+.trust-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 36rpx 0 24rpx;
+  font-size: 24rpx;
+  color: #6b7280;
+}
+
+.trust-num {
+  font-weight: 700;
+  color: #2563eb;
+  margin: 0 4rpx;
+}
+
+/* 主按钮 */
 .submit-btn {
-  margin-top: 16rpx;
+  margin-top: 8rpx;
   height: 96rpx;
   line-height: 96rpx;
-  background: #d0d0d0;
+  background: #d1d5db;
   color: #fff;
   font-size: 32rpx;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 48rpx;
   border: none;
+  letter-spacing: 2rpx;
 }
 
 .submit-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  box-shadow: 0 12rpx 32rpx rgba(37, 99, 235, 0.35);
 }
 
 .submit-btn::after {
   border: none;
 }
 
-.features {
+/* 按钮辅助文案 */
+.btn-hint {
   display: flex;
-  justify-content: space-around;
-  padding: 24rpx 0;
-}
-
-.feature-item {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-}
-
-.feature-icon {
-  font-size: 48rpx;
-  margin-bottom: 12rpx;
-}
-
-.feature-text {
+  justify-content: center;
+  margin-top: 20rpx;
   font-size: 24rpx;
-  color: #666;
+  color: #d1d5db;
 }
 
+/* 底部标签 */
+.footer-tags {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  margin-top: 56rpx;
+  font-size: 24rpx;
+  color: #d1d5db;
+}
+
+.tag-divider {
+  color: #e5e7eb;
+}
+
+/* 数据看板入口 */
 .admin-entry {
-  margin-top: 48rpx;
+  margin-top: 32rpx;
   text-align: center;
-  font-size: 26rpx;
-  color: #aaa;
-  padding: 24rpx;
+  font-size: 24rpx;
+  color: #ccc;
+  padding: 16rpx;
 }

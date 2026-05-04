@@ -49,7 +49,7 @@
 
 .modal-subtitle text {
   font-size: 26rpx;
-  color: #666;
+  color: #6b7280;
 }
 
 .modal-body {
@@ -63,18 +63,18 @@
 }
 
 .status-section.done {
-  background: #f0f9f4;
+  background: #f0fdf4;
 }
 
 .status-section.locked {
-  background: #fff5f5;
+  background: #fef2f2;
 }
 
 .status-title {
   font-size: 24rpx;
   font-weight: 600;
   margin-bottom: 12rpx;
-  color: #333;
+  color: #374151;
 }
 
 .status-item {
@@ -82,25 +82,36 @@
   align-items: center;
   gap: 12rpx;
   font-size: 26rpx;
-  color: #555;
+  color: #4b5563;
   margin-bottom: 8rpx;
 }
 
-.status-icon {
-  font-size: 28rpx;
+.status-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.done-dot {
+  background: #22c55e;
+}
+
+.lock-dot {
+  background: #ef4444;
 }
 
 .price-section {
   text-align: center;
   padding: 20rpx;
-  background: #f8f9fa;
+  background: #f9fafb;
   border-radius: 16rpx;
   margin-bottom: 20rpx;
 }
 
 .price-label {
   font-size: 24rpx;
-  color: #888;
+  color: #9ca3af;
   margin-bottom: 8rpx;
 }
 
@@ -113,17 +124,17 @@
 
 .price-item {
   font-size: 28rpx;
-  color: #333;
+  color: #374151;
 }
 
 .price-num {
   font-size: 40rpx;
   font-weight: 700;
-  color: #e54545;
+  color: #ef4444;
 }
 
 .price-divider {
-  color: #ddd;
+  color: #e5e7eb;
 }
 
 .reward-section {
@@ -133,7 +144,7 @@
 
 .reward-title {
   font-size: 26rpx;
-  color: #333;
+  color: #374151;
   font-weight: 600;
   margin-bottom: 12rpx;
 }
@@ -146,8 +157,8 @@
 }
 
 .reward-item {
-  background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-  color: #6c5ce7;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
   padding: 8rpx 20rpx;
   border-radius: 24rpx;
   font-size: 24rpx;
@@ -156,7 +167,7 @@
 
 .reward-or {
   font-size: 24rpx;
-  color: #999;
+  color: #d1d5db;
 }
 
 .urgency-section {
@@ -166,14 +177,19 @@
 
 .urgency-text {
   font-size: 26rpx;
-  color: #e17055;
+  color: #f97316;
   font-weight: 600;
 }
 
 .social-proof {
   text-align: center;
   font-size: 24rpx;
-  color: #999;
+  color: #9ca3af;
+}
+
+.social-num {
+  font-weight: 700;
+  color: #2563eb;
 }
 
 .modal-footer {
@@ -185,7 +201,7 @@
 .btn-primary {
   height: 92rpx;
   line-height: 92rpx;
-  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
   font-size: 30rpx;
   font-weight: 700;
@@ -194,21 +210,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12rpx;
+  box-shadow: 0 8rpx 24rpx rgba(37, 99, 235, 0.35);
 }
 
 .btn-primary::after {
   border: none;
 }
 
-.btn-icon {
-  font-size: 32rpx;
-}
-
 .btn-secondary {
   text-align: center;
   font-size: 28rpx;
-  color: #999;
+  color: #d1d5db;
   padding: 16rpx 0;
 }
 
@@ -216,11 +228,7 @@
   position: absolute;
   top: 20rpx;
   right: 24rpx;
-  width: 48rpx;
-  height: 48rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ccc;
-  font-size: 28rpx;
+  font-size: 24rpx;
+  color: #d1d5db;
+  padding: 8rpx 16rpx;
 }

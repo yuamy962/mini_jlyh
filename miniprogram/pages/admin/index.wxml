@@ -87,7 +87,7 @@
       </view>
       <view class="standard-item bad">
         <text class="standard-dot"></text>
-        <text>< 5% → 产品或文案需调整</text>
+        <text>&lt; 5% → 产品或文案需调整</text>
       </view>
     </view>
   </view>

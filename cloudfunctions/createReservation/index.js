@@ -3,6 +3,29 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 const db = cloud.database();
 
+// 安全的查询封装：集合不存在时返回默认值
+async function safeGet(collection, query, defaultValue) {
+  try {
+    return await db.collection(collection).where(query).get();
+  } catch (e) {
+    if (e.errCode === -502005 || e.message.includes('Collection not found')) {
+      return defaultValue;
+    }
+    throw e;
+  }
+}
+
+async function safeCount(collection, defaultValue) {
+  try {
+    return await db.collection(collection).count();
+  } catch (e) {
+    if (e.errCode === -502005 || e.message.includes('Collection not found')) {
+      return defaultValue;
+    }
+    throw e;
+  }
+}
+
 exports.main = async (event, context) => {
   const { action, source } = event;
   const wxContext = cloud.getWXContext();
@@ -14,8 +37,7 @@ exports.main = async (event, context) => {
 
   try {
     if (action === 'stats') {
-      // 查询总预约数
-      const countRes = await db.collection('reservations').count();
+      const countRes = await safeCount('reservations', { total: 0 });
       return {
         success: true,
         totalCount: countRes.total || 0
@@ -23,14 +45,10 @@ exports.main = async (event, context) => {
     }
 
     if (action === 'book') {
-      // 检查是否已预约
-      const checkRes = await db.collection('reservations')
-        .where({ _openid: openid })
-        .get();
+      const checkRes = await safeGet('reservations', { _openid: openid }, { data: [] });
       
       if (checkRes.data && checkRes.data.length > 0) {
-        // 已预约，返回现有记录
-        const countRes = await db.collection('reservations').count();
+        const countRes = await safeCount('reservations', { total: 0 });
         return {
           success: true,
           isNew: false,
@@ -39,7 +57,7 @@ exports.main = async (event, context) => {
         };
       }
 
-      // 创建预约记录
+      // 创建预约记录（add 会自动创建集合）
       await db.collection('reservations').add({
         data: {
           source: source || 'unknown',
@@ -47,7 +65,7 @@ exports.main = async (event, context) => {
         }
       });
 
-      const countRes = await db.collection('reservations').count();
+      const countRes = await safeCount('reservations', { total: 0 });
       return {
         success: true,
         isNew: true,

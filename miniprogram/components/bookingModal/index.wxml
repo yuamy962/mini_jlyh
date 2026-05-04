@@ -1,7 +1,7 @@
 <view class="booking-mask" wx:if="{{visible}}" bindtap="onMaskTap">
   <view class="booking-modal" catchtap="onModalTap">
     <view class="modal-header">
-      <view class="modal-title">🔒 还有关键优化未解锁</view>
+      <view class="modal-title">还有关键优化未解锁</view>
       <view class="modal-subtitle">
         <text>已检测到影响面试通过率的核心问题</text>
         <text>完整优化后可明显提升通过率</text>
@@ -12,11 +12,11 @@
       <view class="status-section done">
         <view class="status-title">已完成</view>
         <view class="status-item">
-          <text class="status-icon">✅</text>
+          <view class="status-dot done-dot"></view>
           <text>已为你优化前30%内容</text>
         </view>
         <view class="status-item">
-          <text class="status-icon">✅</text>
+          <view class="status-dot done-dot"></view>
           <text>已识别关键问题点</text>
         </view>
       </view>
@@ -24,11 +24,11 @@
       <view class="status-section locked">
         <view class="status-title">未解锁</view>
         <view class="status-item">
-          <text class="status-icon">🔒</text>
+          <view class="status-dot lock-dot"></view>
           <text>剩余70%优化内容未查看</text>
         </view>
         <view class="status-item">
-          <text class="status-icon">🔒</text>
+          <view class="status-dot lock-dot"></view>
           <text>完整问题分析未解锁</text>
         </view>
       </view>
@@ -43,7 +43,7 @@
       </view>
 
       <view class="reward-section">
-        <view class="reward-title">🎁 预约用户上线后可获得</view>
+        <view class="reward-title">预约用户上线后可获得</view>
         <view class="reward-options">
           <text class="reward-item">免费解锁1次</text>
           <text class="reward-or">或</text>
@@ -52,17 +52,16 @@
       </view>
 
       <view class="urgency-section">
-        <text class="urgency-text">⏳ 内测名额仅限前100人</text>
+        <text class="urgency-text">内测名额仅限前100人</text>
       </view>
 
       <view class="social-proof">
-        <text>已有 {{bookingCount}} 人预约解锁完整版</text>
+        <text>已有 <text class="social-num">{{bookingCount}}</text> 人预约解锁完整版</text>
       </view>
     </view>
 
     <view class="modal-footer">
       <button class="btn-primary" bindtap="onBooking">
-        <text class="btn-icon">🔥</text>
         <text>立即预约（上线优先解锁）</text>
       </button>
       <view class="btn-secondary" bindtap="onCancel">
@@ -71,7 +70,7 @@
     </view>
 
     <view class="close-btn" bindtap="onCancel">
-      <text>✕</text>
+      <text>关闭</text>
     </view>
   </view>
 </view>

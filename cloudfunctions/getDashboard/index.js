@@ -3,49 +3,43 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 const db = cloud.database();
 const _ = db.command;
 
+// 安全的 count 封装
+async function safeCount(collection, query) {
+  try {
+    return await db.collection(collection).where(query).count();
+  } catch (e) {
+    if (e.errCode === -502005 || e.message.includes('Collection not found')) {
+      return { total: 0 };
+    }
+    throw e;
+  }
+}
+
 exports.main = async (event, context) => {
   try {
-    // 1. 总用户数
-    const usersCountRes = await db.collection('users').count();
+    const usersCountRes = await safeCount('users', {});
     const totalUsers = usersCountRes.total || 0;
 
-    // 2. 点击过付费用户数
-    const clickedPayRes = await db.collection('users').where({
+    const clickedPayRes = await safeCount('users', {
       tag: _.in(['clicked_pay', 'booked'])
-    }).count();
+    });
     const clickedPayUsers = clickedPayRes.total || 0;
 
-    // 3. 已预约用户数
-    const bookedRes = await db.collection('users').where({
-      tag: 'booked'
-    }).count();
+    const bookedRes = await safeCount('users', { tag: 'booked' });
     const bookedUsers = bookedRes.total || 0;
 
-    // 4. 弹窗展示次数
-    const modalShowRes = await db.collection('events').where({
-      eventType: 'show_modal'
-    }).count();
+    const modalShowRes = await safeCount('events', { eventType: 'show_modal' });
     const modalShows = modalShowRes.total || 0;
 
-    // 5. 解锁点击次数
-    const unlockClickRes = await db.collection('events').where({
-      eventType: 'click_unlock'
-    }).count();
+    const unlockClickRes = await safeCount('events', { eventType: 'click_unlock' });
     const unlockClicks = unlockClickRes.total || 0;
 
-    // 6. 预约点击次数
-    const bookClickRes = await db.collection('events').where({
-      eventType: 'click_book'
-    }).count();
+    const bookClickRes = await safeCount('events', { eventType: 'click_book' });
     const bookClicks = bookClickRes.total || 0;
 
-    // 7. 提交简历次数
-    const submitRes = await db.collection('events').where({
-      eventType: 'submit_resume'
-    }).count();
+    const submitRes = await safeCount('events', { eventType: 'submit_resume' });
     const submitCount = submitRes.total || 0;
 
-    // 转化率计算
     const unlockToBookRate = unlockClicks > 0 ? ((bookClicks / unlockClicks) * 100).toFixed(2) : 0;
     const modalToBookRate = modalShows > 0 ? ((bookClicks / modalShows) * 100).toFixed(2) : 0;
 

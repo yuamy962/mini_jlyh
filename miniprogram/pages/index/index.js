@@ -4,6 +4,8 @@ Page({
     jobTitle: '',
     resumeContent: '',
     contentLength: 0,
+    wordCountStatus: '',
+    wordCountHint: '',
     canSubmit: false,
     loading: false,
     showBookingModal: false,
@@ -47,8 +49,50 @@ Page({
 
   onResumeInput(e) {
     const value = e.detail.value;
-    this.setData({ resumeContent: value, contentLength: value.length });
+    const len = value.length;
+    this.setData({ 
+      resumeContent: value, 
+      contentLength: len 
+    });
+    this.updateWordCountHint(len);
     this.checkCanSubmit();
+  },
+
+  updateWordCountHint(len) {
+    let status = '';
+    let hint = '';
+    if (len > 0 && len < 100) {
+      status = 'warning';
+      hint = '（内容过少）';
+    } else if (len > 2000) {
+      status = 'too-much';
+      hint = '（内容较长）';
+    } else if (len >= 100) {
+      status = 'normal';
+    }
+    this.setData({ wordCountStatus: status, wordCountHint: hint });
+  },
+
+  onPaste() {
+    wx.getClipboardData({
+      success: (res) => {
+        const text = res.data || '';
+        if (!text.trim()) {
+          wx.showToast({ title: '剪贴板为空', icon: 'none' });
+          return;
+        }
+        this.setData({ 
+          resumeContent: text, 
+          contentLength: text.length 
+        });
+        this.updateWordCountHint(text.length);
+        this.checkCanSubmit();
+        wx.showToast({ title: '已粘贴', icon: 'success' });
+      },
+      fail: () => {
+        wx.showToast({ title: '无法读取剪贴板', icon: 'none' });
+      }
+    });
   },
 
   checkCanSubmit() {
@@ -59,8 +103,34 @@ Page({
   },
 
   onSubmit() {
-    const { jobTitle, resumeContent, canSubmit, loading } = this.data;
+    const { jobTitle, resumeContent, canSubmit, loading, contentLength } = this.data;
     if (!canSubmit || loading) return;
+
+    // 岗位为空校验
+    if (!jobTitle.trim()) {
+      wx.showToast({ title: '请输入目标岗位', icon: 'none' });
+      return;
+    }
+
+    // 简历内容为空校验
+    if (!resumeContent.trim()) {
+      wx.showToast({ title: '请粘贴简历内容', icon: 'none' });
+      return;
+    }
+
+    // 内容过少校验
+    if (contentLength < 100) {
+      wx.showModal({
+        title: '内容较少',
+        content: '内容过少，建议补充工作经历或项目经验，优化效果会更好。是否继续？',
+        confirmText: '继续',
+        cancelText: '去补充',
+        success: (res) => {
+          if (res.confirm) this.doSubmit();
+        }
+      });
+      return;
+    }
 
     if (resumeContent.length > 8000) {
       wx.showModal({
@@ -162,7 +232,7 @@ Page({
     wx.showModal({
       title: '清除缓存',
       content: '确定要清除本地测试数据吗？（使用次数、预约状态）',
-      confirmColor: '#e54545',
+      confirmColor: '#ef4444',
       success: (res) => {
         if (res.confirm) {
           wx.removeStorageSync('resume_usage_count');

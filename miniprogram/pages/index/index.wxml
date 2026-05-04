@@ -1,15 +1,17 @@
 <view class="container">
+  <!-- 顶部区域 -->
   <view class="header">
-    <view class="main-title" bindlongpress="onClearCache">帮你拿更多面试机会的简历工具</view>
-    <view class="sub-title">AI 智能优化 · 问题诊断 · 成果强化</view>
+    <view class="main-title">让你的简历<text class="highlight">更容易拿到面试</text></view>
+    <view class="sub-title">AI优化 · 问题诊断 · 匹配评分</view>
   </view>
 
-  <view class="form-section">
+  <!-- 表单卡片 -->
+  <view class="form-card">
     <view class="form-item">
       <view class="label">目标岗位 <text class="required">*</text></view>
       <input 
         class="input" 
-        placeholder="例如：前端开发工程师" 
+        placeholder="请输入目标岗位（如：前端开发工程师）" 
         value="{{jobTitle}}"
         bindinput="onJobTitleInput"
       />
@@ -17,38 +19,44 @@
 
     <view class="form-item">
       <view class="label">简历内容 <text class="required">*</text></view>
-      <textarea 
-        class="textarea" 
-        placeholder="请粘贴你的简历内容..."
-        value="{{resumeContent}}"
-        bindinput="onResumeInput"
-        maxlength="-1"
-      />
-      <view class="word-count {{contentLength > 5000 ? 'warning' : ''}}">{{contentLength}} 字 {{contentLength > 5000 ? '(内容较长，可能影响优化效果)' : ''}}</view>
+      <view class="textarea-wrap">
+        <textarea 
+          class="textarea" 
+          placeholder="请粘贴你的简历内容（支持从Word/PDF复制）"
+          value="{{resumeContent}}"
+          bindinput="onResumeInput"
+          maxlength="-1"
+        />
+        <view class="paste-btn" bindtap="onPaste">
+          <text>一键粘贴</text>
+        </view>
+      </view>
+      <view class="input-guide">建议包含：工作经历 / 项目经验 / 技能</view>
+      <view class="word-count-row">
+        <text class="privacy-tip">内容仅用于优化，不会存储或泄露</text>
+        <text class="word-count {{wordCountStatus}}">{{contentLength}} 字 {{wordCountHint}}</text>
+      </view>
+    </view>
+
+    <!-- 信任文案 -->
+    <view class="trust-bar" wx:if="{{bookingCount > 0}}">
+      <text class="trust-text">已有 <text class="trust-num">{{bookingCount}}</text> 人完成简历优化</text>
     </view>
 
     <button class="submit-btn {{canSubmit ? 'active' : ''}}" bindtap="onSubmit" disabled="{{!canSubmit || loading}}">
-      {{loading ? 'AI优化中...' : '开始优化'}}
+      {{loading ? 'AI优化中...' : '立即优化简历'}}
     </button>
+
+    <view class="btn-hint">30秒生成优化结果</view>
   </view>
 
-  <view class="features">
-    <view class="feature-item">
-      <text class="feature-icon">📝</text>
-      <text class="feature-text">智能优化表达</text>
-    </view>
-    <view class="feature-item">
-      <text class="feature-icon">🔍</text>
-      <text class="feature-text">精准问题诊断</text>
-    </view>
-    <view class="feature-item">
-      <text class="feature-icon">🎯</text>
-      <text class="feature-text">岗位匹配评分</text>
-    </view>
-  </view>
-
-  <view class="admin-entry" bindtap="goToAdmin">
-    <text>📊 数据看板</text>
+  <!-- 底部标签 -->
+  <view class="footer-tags">
+    <text>智能优化</text>
+    <text class="tag-divider">|</text>
+    <text>问题诊断</text>
+    <text class="tag-divider">|</text>
+    <text>匹配评分</text>
   </view>
 </view>
 

@@ -1,7 +1,9 @@
 <view class="success-mask" wx:if="{{visible}}" bindtap="onMaskTap">
   <view class="success-modal" catchtap="onModalTap">
-    <view class="success-icon">✅</view>
-    <view class="success-title">预约成功！</view>
+    <view class="success-icon">
+      <view class="icon-circle">对</view>
+    </view>
+    <view class="success-title">预约成功</view>
     <view class="success-desc">支付功能上线后将优先通知你</view>
     <button class="success-btn" bindtap="onClose">我知道了</button>
   </view>
