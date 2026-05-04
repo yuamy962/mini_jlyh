@@ -49,12 +49,25 @@ page {
   font-weight: 700;
   color: #1a1a2e;
   margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.count-badge {
+  font-size: 22rpx;
+  color: #999;
+  font-weight: 400;
+  background: #f0f0f0;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
 }
 
 .content-box {
   background: #f8f9fa;
   border-radius: 16rpx;
-  padding: 24rpx;
+  position: relative;
+  overflow: hidden;
 }
 
 .content-text {
@@ -63,10 +76,64 @@ page {
   line-height: 1.8;
 }
 
+/* 简历截断展示 */
+.resume-box {
+  position: relative;
+  padding: 24rpx;
+}
+
+.resume-preview {
+  max-height: 360rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.resume-preview::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background: linear-gradient(to bottom, rgba(248,249,250,0), rgba(248,249,250,1));
+}
+
+.lock-overlay {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32rpx 0 8rpx;
+  margin-top: -40rpx;
+  z-index: 2;
+}
+
+.lock-icon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.lock-text {
+  font-size: 26rpx;
+  color: #888;
+  margin-bottom: 16rpx;
+}
+
+.unlock-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: 600;
+  padding: 16rpx 48rpx;
+  border-radius: 40rpx;
+}
+
+/* 问题列表 */
 .problem-list {
   display: flex;
   flex-direction: column;
   gap: 16rpx;
+  margin-bottom: 16rpx;
 }
 
 .problem-item {
@@ -88,4 +155,27 @@ page {
   font-size: 26rpx;
   color: #666;
   line-height: 1.6;
+}
+
+/* 查看更多问题 */
+.more-problems {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 24rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+  border: 2rpx dashed #ddd;
+  font-size: 26rpx;
+  color: #888;
+}
+
+.more-icon {
+  font-size: 28rpx;
+}
+
+.more-arrow {
+  font-size: 32rpx;
+  color: #ccc;
 }

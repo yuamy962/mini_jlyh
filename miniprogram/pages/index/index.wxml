@@ -47,3 +47,17 @@
     </view>
   </view>
 </view>
+
+<!-- 预约弹窗 -->
+<booking-modal 
+  visible="{{showBookingModal}}" 
+  bookingCount="{{bookingCount}}"
+  bind:close="onCloseBookingModal"
+  bind:confirm="onBooking"
+/>
+
+<!-- 预约成功弹窗 -->
+<booking-success-modal 
+  visible="{{showSuccessModal}}"
+  bind:close="onCloseSuccessModal"
+/>

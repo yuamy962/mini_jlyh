@@ -1,0 +1,77 @@
+<view class="booking-mask" wx:if="{{visible}}" bindtap="onMaskTap">
+  <view class="booking-modal" catchtap="onModalTap">
+    <view class="modal-header">
+      <view class="modal-title">🔒 还有关键优化未解锁</view>
+      <view class="modal-subtitle">
+        <text>已检测到影响面试通过率的核心问题</text>
+        <text>完整优化后可明显提升通过率</text>
+      </view>
+    </view>
+
+    <view class="modal-body">
+      <view class="status-section done">
+        <view class="status-title">已完成</view>
+        <view class="status-item">
+          <text class="status-icon">✅</text>
+          <text>已为你优化前30%内容</text>
+        </view>
+        <view class="status-item">
+          <text class="status-icon">✅</text>
+          <text>已识别关键问题点</text>
+        </view>
+      </view>
+
+      <view class="status-section locked">
+        <view class="status-title">未解锁</view>
+        <view class="status-item">
+          <text class="status-icon">🔒</text>
+          <text>剩余70%优化内容未查看</text>
+        </view>
+        <view class="status-item">
+          <text class="status-icon">🔒</text>
+          <text>完整问题分析未解锁</text>
+        </view>
+      </view>
+
+      <view class="price-section">
+        <view class="price-label">正式版价格</view>
+        <view class="price-value">
+          <text class="price-item">单次 <text class="price-num">1.9</text> 元</text>
+          <text class="price-divider">|</text>
+          <text class="price-item">全天 <text class="price-num">6.9</text> 元</text>
+        </view>
+      </view>
+
+      <view class="reward-section">
+        <view class="reward-title">🎁 预约用户上线后可获得</view>
+        <view class="reward-options">
+          <text class="reward-item">免费解锁1次</text>
+          <text class="reward-or">或</text>
+          <text class="reward-item">专属5折优惠</text>
+        </view>
+      </view>
+
+      <view class="urgency-section">
+        <text class="urgency-text">⏳ 内测名额仅限前100人</text>
+      </view>
+
+      <view class="social-proof">
+        <text>已有 {{bookingCount}} 人预约解锁完整版</text>
+      </view>
+    </view>
+
+    <view class="modal-footer">
+      <button class="btn-primary" bindtap="onBooking">
+        <text class="btn-icon">🔥</text>
+        <text>立即预约（上线优先解锁）</text>
+      </button>
+      <view class="btn-secondary" bindtap="onCancel">
+        <text>再看看</text>
+      </view>
+    </view>
+
+    <view class="close-btn" bindtap="onCancel">
+      <text>✕</text>
+    </view>
+  </view>
+</view>

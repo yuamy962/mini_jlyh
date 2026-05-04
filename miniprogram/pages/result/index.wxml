@@ -1,4 +1,5 @@
 <view class="container">
+  <!-- 评分区域 -->
   <view class="score-section">
     <view class="score-circle">
       <text class="score-num">{{result.matchScore}}</text>
@@ -6,23 +7,43 @@
     </view>
   </view>
 
+  <!-- 优化后简历（截断展示） -->
   <view class="section">
     <view class="section-title">📝 优化后简历</view>
-    <view class="content-box">
-      <text class="content-text">{{result.optimizedResume}}</text>
-    </view>
-  </view>
-
-  <view class="section">
-    <view class="section-title">⚠️ 存在问题</view>
-    <view class="problem-list">
-      <view class="problem-item" wx:for="{{result.problems}}" wx:key="index">
-        <text class="problem-type">{{item.type}}</text>
-        <text class="problem-desc">{{item.description}}</text>
+    <view class="content-box resume-box">
+      <view class="resume-preview">
+        <text class="content-text">{{result.optimizedResume}}</text>
+      </view>
+      <view class="lock-overlay">
+        <view class="lock-icon">🔒</view>
+        <view class="lock-text">剩余 70% 内容已锁定</view>
+        <view class="unlock-btn" bindtap="onUnlockResume">
+          <text>🔓 解锁完整优化</text>
+        </view>
       </view>
     </view>
   </view>
 
+  <!-- 存在问题（仅展示2条） -->
+  <view class="section">
+    <view class="section-title">
+      ⚠️ 存在问题
+      <text class="count-badge" wx:if="{{problemsHidden.length > 0}}">展示 2/{{result.problems.length}}</text>
+    </view>
+    <view class="problem-list">
+      <view class="problem-item" wx:for="{{problemsPreview}}" wx:key="index">
+        <text class="problem-type">{{item.type}}</text>
+        <text class="problem-desc">{{item.description}}</text>
+      </view>
+    </view>
+    <view class="more-problems" wx:if="{{problemsHidden.length > 0}}" bindtap="onMoreProblems">
+      <text class="more-icon">🔒</text>
+      <text>还有 {{problemsHidden.length}} 条关键问题未展示</text>
+      <text class="more-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 优化说明 -->
   <view class="section">
     <view class="section-title">💡 优化说明</view>
     <view class="content-box">
@@ -30,3 +51,17 @@
     </view>
   </view>
 </view>
+
+<!-- 预约弹窗 -->
+<booking-modal 
+  visible="{{showBookingModal}}" 
+  bookingCount="{{bookingCount}}"
+  bind:close="onCloseBookingModal"
+  bind:confirm="onBooking"
+/>
+
+<!-- 预约成功弹窗 -->
+<booking-success-modal 
+  visible="{{showSuccessModal}}"
+  bind:close="onCloseSuccessModal"
+/>

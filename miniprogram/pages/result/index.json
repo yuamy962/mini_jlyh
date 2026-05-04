@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "优化结果",
-  "usingComponents": {}
+  "usingComponents": {
+    "booking-modal": "/components/bookingModal/index",
+    "booking-success-modal": "/components/bookingSuccessModal/index"
+  }
 }
