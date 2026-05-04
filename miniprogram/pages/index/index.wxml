@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="header">
+    <view class="main-title">帮你拿更多面试机会的简历工具</view>
+    <view class="sub-title">AI 智能优化 · 问题诊断 · 成果强化</view>
+  </view>
+
+  <view class="form-section">
+    <view class="form-item">
+      <view class="label">目标岗位 <text class="required">*</text></view>
+      <input 
+        class="input" 
+        placeholder="例如：前端开发工程师" 
+        value="{{jobTitle}}"
+        bindinput="onJobTitleInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="label">简历内容 <text class="required">*</text></view>
+      <textarea 
+        class="textarea" 
+        placeholder="请粘贴你的简历内容..."
+        value="{{resumeContent}}"
+        bindinput="onResumeInput"
+        maxlength="-1"
+      />
+      <view class="word-count">{{contentLength}} 字</view>
+    </view>
+
+    <button class="submit-btn {{canSubmit ? 'active' : ''}}" bindtap="onSubmit" disabled="{{!canSubmit || loading}}">
+      {{loading ? 'AI优化中...' : '开始优化'}}
+    </button>
+  </view>
+
+  <view class="features">
+    <view class="feature-item">
+      <text class="feature-icon">📝</text>
+      <text class="feature-text">智能优化表达</text>
+    </view>
+    <view class="feature-item">
+      <text class="feature-icon">🔍</text>
+      <text class="feature-text">精准问题诊断</text>
+    </view>
+    <view class="feature-item">
+      <text class="feature-icon">🎯</text>
+      <text class="feature-text">岗位匹配评分</text>
+    </view>
+  </view>
+</view>

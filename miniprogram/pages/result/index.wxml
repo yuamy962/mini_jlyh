@@ -1,0 +1,32 @@
+<view class="container">
+  <view class="score-section">
+    <view class="score-circle">
+      <text class="score-num">{{result.matchScore}}</text>
+      <text class="score-label">匹配度评分</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">📝 优化后简历</view>
+    <view class="content-box">
+      <text class="content-text">{{result.optimizedResume}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">⚠️ 存在问题</view>
+    <view class="problem-list">
+      <view class="problem-item" wx:for="{{result.problems}}" wx:key="index">
+        <text class="problem-type">{{item.type}}</text>
+        <text class="problem-desc">{{item.description}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">💡 优化说明</view>
+    <view class="content-box">
+      <text class="content-text">{{result.optimizationNotes}}</text>
+    </view>
+  </view>
+</view>
