@@ -5,10 +5,16 @@
       <text class="score-num">{{result.matchScore}}</text>
       <text class="score-label">匹配度评分</text>
     </view>
+    <view class="score-comment {{result.matchScore < 70 ? 'low' : result.matchScore < 85 ? 'mid' : 'high'}}">
+      <text wx:if="{{result.matchScore < 70}}">当前评分偏低，简历较难通过初筛</text>
+      <text wx:elif="{{result.matchScore < 85}}">匹配度尚可，仍有提升空间</text>
+      <text wx:else>匹配度较高，优化后可更具竞争力</text>
+    </view>
   </view>
 
   <!-- 优化后简历（截断展示） -->
   <view class="section">
+    <view class="section-hint">已根据目标岗位优化表达，更突出成果与匹配度</view>
     <view class="section-title">优化后简历</view>
     <view class="content-box resume-box">
       <view class="resume-preview">
@@ -16,7 +22,8 @@
       </view>
       <view class="lock-overlay">
         <view class="lock-icon">锁</view>
-        <view class="lock-text">剩余 70% 内容已锁定</view>
+        <view class="lock-title">还有关键优化未查看</view>
+        <view class="lock-desc">影响面试通过率，完整优化后可明显提升</view>
         <view class="unlock-btn" bindtap="onUnlockResume">
           <text>解锁完整优化</text>
         </view>
@@ -32,13 +39,15 @@
     </view>
     <view class="problem-list">
       <view class="problem-item" wx:for="{{problemsPreview}}" wx:key="index">
-        <text class="problem-type">{{item.type}}</text>
+        <view class="problem-header">
+          <view class="problem-tag">{{item.type}}</view>
+        </view>
         <text class="problem-desc">{{item.description}}</text>
       </view>
     </view>
     <view class="more-problems" wx:if="{{problemsHidden.length > 0}}" bindtap="onMoreProblems">
-      <text class="more-icon">锁</text>
-      <text>还有 {{problemsHidden.length}} 条关键问题未展示</text>
+      <view class="more-icon">!</view>
+      <text>还有 {{problemsHidden.length}} 个关键问题未查看（可能直接影响面试结果）</text>
       <text class="more-arrow">›</text>
     </view>
   </view>
