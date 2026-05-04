@@ -20,12 +20,10 @@ Page({
       return;
     }
 
-    // 分离问题列表：展示前2条，隐藏剩余
     const problems = result.problems || [];
     const problemsPreview = problems.slice(0, 2);
     const problemsHidden = problems.slice(2);
 
-    // 检查是否已预约
     const isBooked = wx.getStorageSync('has_booked') || false;
 
     this.setData({ 
@@ -35,12 +33,10 @@ Page({
       isBooked 
     });
 
-    // 获取预约统计
     this.fetchBookingStats();
   },
 
   onShow() {
-    // 每次显示时刷新预约状态
     const isBooked = wx.getStorageSync('has_booked') || false;
     if (isBooked !== this.data.isBooked) {
       this.setData({ isBooked });
@@ -53,9 +49,7 @@ Page({
       data: { action: 'stats' }
     }).then(res => {
       if (res.result && res.result.success) {
-        this.setData({
-          bookingCount: res.result.totalCount || 1023
-        });
+        this.setData({ bookingCount: res.result.totalCount || 1023 });
       }
     }).catch(err => {
       console.error('获取统计失败', err);
@@ -64,17 +58,30 @@ Page({
 
   onUnlockResume() {
     this.setData({ showBookingModal: true });
+    const app = getApp();
+    app.trackEvent('click_unlock', 'result');
+    app.trackEvent('show_modal', 'result');
+    app.updateUserTag('clicked_pay');
   },
 
   onMoreProblems() {
     this.setData({ showBookingModal: true });
+    const app = getApp();
+    app.trackEvent('click_unlock', 'result');
+    app.trackEvent('show_modal', 'result');
+    app.updateUserTag('clicked_pay');
   },
 
   onCloseBookingModal() {
     this.setData({ showBookingModal: false });
+    const app = getApp();
+    app.trackEvent('click_cancel', 'result');
   },
 
   onBooking() {
+    const app = getApp();
+    app.trackEvent('click_book', 'result');
+    
     wx.cloud.callFunction({
       name: 'createReservation',
       data: { action: 'book', source: 'result' }
@@ -82,6 +89,8 @@ Page({
       const result = res.result;
       if (result && result.success) {
         wx.setStorageSync('has_booked', true);
+        app.updateUserTag('booked');
+        
         this.setData({ 
           showBookingModal: false,
           showSuccessModal: true,

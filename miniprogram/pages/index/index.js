@@ -13,9 +13,20 @@ Page({
   },
 
   onLoad() {
-    // 检查预约状态
-    const isBooked = wx.getStorageSync('has_booked') || false;
-    this.setData({ isBooked });
+    // 获取用户标签
+    wx.cloud.callFunction({
+      name: 'getUserTag',
+      data: { action: 'get' }
+    }).then(res => {
+      if (res.result && res.result.success) {
+        const user = res.result.data;
+        this.setData({ isBooked: user.tag === 'booked' });
+        if (user.usageCount > 0) {
+          wx.setStorageSync('resume_usage_count', user.usageCount);
+        }
+      }
+    }).catch(() => {});
+
     this.fetchBookingStats();
   },
 
@@ -52,15 +63,18 @@ Page({
     const { jobTitle, resumeContent, canSubmit, loading } = this.data;
     if (!canSubmit || loading) return;
 
-    // 检查使用次数
     const usageCount = wx.getStorageSync('resume_usage_count') || 0;
     if (usageCount >= 1 && !this.data.isBooked) {
-      // 第二次使用且未预约，显示预约弹窗
       this.setData({ showBookingModal: true });
+      const app = getApp();
+      app.trackEvent('show_modal', 'index');
       return;
     }
 
     this.setData({ loading: true });
+
+    const app = getApp();
+    app.trackEvent('submit_resume', 'index');
 
     wx.cloud.callFunction({
       name: 'resumeOptimize',
@@ -74,8 +88,9 @@ Page({
         const app = getApp();
         app.globalData.optimizeResult = result.data;
         
-        // 增加使用次数
-        wx.setStorageSync('resume_usage_count', usageCount + 1);
+        const newCount = usageCount + 1;
+        wx.setStorageSync('resume_usage_count', newCount);
+        app.updateUserTag(null, newCount);
         
         wx.navigateTo({ url: '/pages/result/index' });
       } else {
@@ -91,9 +106,14 @@ Page({
 
   onCloseBookingModal() {
     this.setData({ showBookingModal: false });
+    const app = getApp();
+    app.trackEvent('click_cancel', 'index');
   },
 
   onBooking() {
+    const app = getApp();
+    app.trackEvent('click_book', 'index');
+    
     wx.cloud.callFunction({
       name: 'createReservation',
       data: { action: 'book', source: 'index' }
@@ -101,6 +121,8 @@ Page({
       const result = res.result;
       if (result && result.success) {
         wx.setStorageSync('has_booked', true);
+        app.updateUserTag('booked');
+        
         this.setData({ 
           showBookingModal: false,
           showSuccessModal: true,

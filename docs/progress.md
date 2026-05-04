@@ -21,7 +21,7 @@
 ```
 阶段一 [██████████] 100%  ✅ 已完成
 阶段二 [██████████] 100%  ✅ 已完成
-阶段三 [░░░░░░░░░░] 0%    ⏳ 待开始
+阶段三 [██████████] 100%  ✅ 已完成
 阶段四 [░░░░░░░░░░] 0%    ⏳ 待开始
 ```
 
@@ -131,7 +131,67 @@
 
 ---
 
-## ⏳ 阶段三：云函数后端（预约记录、用户标签、埋点统计）（待开始）
+## ✅ 阶段三：云函数后端（预约记录、用户标签、埋点统计）（已完成）
+
+### 完成时间
+2026-05-04
+
+### 已完成文件
+
+| 文件路径 | 说明 |
+|---|---|
+| `cloudfunctions/trackEvent/index.js` | **埋点云函数**：记录所有用户行为事件到 `events` 集合 |
+| `cloudfunctions/getUserTag/index.js` | **用户标签云函数**：获取/更新用户标签和 usageCount |
+| `cloudfunctions/getDashboard/index.js` | **统计面板云函数**：计算转化率等核心指标 |
+| `miniprogram/app.js` | 增加全局方法 `trackEvent()` 和 `updateUserTag()` |
+| `miniprogram/pages/index/index.js` | 集成埋点：submit_resume / show_modal / click_book / click_cancel |
+| `miniprogram/pages/result/index.js` | 集成埋点：click_unlock / show_modal / click_book / click_cancel + 标签更新 |
+
+### 数据库集合设计
+
+| 集合名 | 用途 | 字段 |
+|---|---|---|
+| `reservations` | 预约记录（阶段二已创建）| _openid, source, createTime |
+| `users` | 用户标签 | _openid, tag, usageCount, firstVisitTime, lastVisitTime |
+| `events` | 埋点事件 | _openid, eventType, page, extraData, createTime |
+
+### 埋点事件清单
+
+| eventType | 触发时机 | 页面 |
+|---|---|---|
+| `submit_resume` | 点击「开始优化」| index |
+| `show_modal` | 弹窗展示 | index/result |
+| `click_unlock` | 点击「解锁完整优化」或「查看更多问题」| result |
+| `click_book` | 点击「立即预约」| index/result |
+| `click_cancel` | 点击「再看看」或关闭弹窗 | index/result |
+
+### 用户标签流转
+
+```
+normal（普通用户）
+  → 点击解锁/查看更多/第二次使用开始优化 → clicked_pay（点击过付费用户）
+    → 点击立即预约 → booked（已预约用户）
+```
+
+### 统计指标
+
+| 指标 | 计算方式 |
+|---|---|
+| 总用户数 | users 集合总数 |
+| 点击过付费用户数 | tag = 'clicked_pay' 或 'booked' |
+| 已预约用户数 | tag = 'booked' |
+| 弹窗展示次数 | events 中 eventType = 'show_modal' |
+| 解锁点击次数 | events 中 eventType = 'click_unlock' |
+| 预约点击次数 | events 中 eventType = 'click_book' |
+| 解锁→预约转化率 | bookClicks / unlockClicks × 100% |
+| 弹窗→预约转化率 | bookClicks / modalShows × 100% |
+
+### 需要手动配置的事项
+
+- [ ] 上传并部署云函数 `trackEvent`
+- [ ] 上传并部署云函数 `getUserTag`
+- [ ] 上传并部署云函数 `getDashboard`
+- [ ] 云数据库自动创建 `users` 和 `events` 集合（首次调用时自动创建）
 
 ### 预计内容
 
@@ -230,6 +290,7 @@ env: "你的云开发环境ID",
 |---|---|---|
 | 2026-05-04 | 阶段一完成：输入页 + DeepSeek AI 接口对接 | Kimi |
 | 2026-05-04 | 阶段二完成：结果页截断展示 + 预约解锁弹窗 | Kimi |
+| 2026-05-04 | 阶段三开始：用户标签 + 埋点统计 + 数据面板 | Kimi |
 | 2026-05-04 | 创建开发进度文档 | Kimi |
 
 ---

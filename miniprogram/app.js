@@ -15,4 +15,21 @@ App({
       });
     }
   },
+
+  trackEvent(eventType, page, extraData) {
+    wx.cloud.callFunction({
+      name: 'trackEvent',
+      data: { eventType, page, extraData }
+    }).catch(() => {});
+  },
+
+  updateUserTag(tag, usageCount) {
+    const data = { action: 'update' };
+    if (tag) data.tag = tag;
+    if (typeof usageCount === 'number') data.usageCount = usageCount;
+    return wx.cloud.callFunction({
+      name: 'getUserTag',
+      data
+    }).catch(() => {});
+  }
 });
