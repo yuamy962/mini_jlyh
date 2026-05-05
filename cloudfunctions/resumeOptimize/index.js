@@ -32,7 +32,24 @@ const MOCK_RESULT = {
     { type: '被质疑点', description: '技术栈描述较浅，缺少难点攻克和复杂场景处理经验，面试时容易被追问"这个项目难点是什么"。' },
     { type: '成果强化', description: '缺少对业务价值的描述，建议补充"通过 XX 优化，带来 XX 业务指标提升"的表达方式。' }
   ],
-  optimizationNotes: '本次优化重点：1）将职责描述改为成果导向表达，补充量化数据；2）去除"负责""参与"等弱动词，改用"主导""推动""优化"等强动词；3）增加业务价值描述，让 HR 快速感知你的贡献度。'
+  optimizationNotes: '本次优化重点：1）将职责描述改为成果导向表达，补充量化数据；2）去除"负责""参与"等弱动词，改用"主导""推动""优化"等强动词；3）增加业务价值描述，让 HR 快速感知你的贡献度。',
+  keyComparisons: [
+    {
+      before: '参与项目开发',
+      after: '主导【核心模块】开发，提升【30%】系统性能',
+      explanation: '增加量化成果，让能力更具说服力'
+    },
+    {
+      before: '负责系统维护',
+      after: '搭建【自动化运维体系】，故障率降低【20%】',
+      explanation: '突出结果导向，更容易通过筛选'
+    },
+    {
+      before: '协助团队完成项目',
+      after: '带领【5人团队】完成项目交付，效率提升【25%】',
+      explanation: '体现领导力与团队协作成果'
+    }
+  ]
 };
 
 function callDeepSeekAPI(jobTitle, resumeContent) {
@@ -48,14 +65,22 @@ function callDeepSeekAPI(jobTitle, resumeContent) {
     {"type": "无成果", "description": "具体问题描述"},
     {"type": "被质疑点", "description": "具体问题描述"}
   ],
-  "optimizationNotes": "优化说明，简要说明优化了哪些方面"
+  "optimizationNotes": "优化说明，简要说明优化了哪些方面",
+  "keyComparisons": [
+    {
+      "before": "原文中的典型句子",
+      "after": "优化后的表达，用【】包裹关键成果信息（如数字、核心动词、关键成果）",
+      "explanation": "一句话解释为什么这样优化更好"
+    }
+  ]
 }
 
 要求：
 1. matchScore：根据简历与岗位的匹配度给出 0-100 的评分
 2. optimizedResume：对原简历进行优化重写，使其更具成果导向，去除空话套话，量化成果，保留核心经历
 3. problems：至少找出 3-5 个关键问题，每个问题包含 type（问题类型：空话套话/无成果/被质疑点/成果强化）和 description（具体描述，指出问题并给出改进建议）
-4. optimizationNotes：简要总结优化思路和核心改进点`;
+4. optimizationNotes：简要总结优化思路和核心改进点
+5. keyComparisons：返回2-3个最具代表性的优化前后对比，每个对比包含 before（原文）、after（优化后，用【】包裹高亮内容）、explanation（优化说明）`;
 
     const userPrompt = `岗位名称：${jobTitle}\n\n简历内容：\n${resumeContent}`;
 
@@ -96,7 +121,8 @@ function callDeepSeekAPI(jobTitle, resumeContent) {
             matchScore: result.matchScore || 75,
             optimizedResume: result.optimizedResume || '',
             problems: result.problems || [],
-            optimizationNotes: result.optimizationNotes || ''
+            optimizationNotes: result.optimizationNotes || '',
+            keyComparisons: result.keyComparisons || []
           });
         } catch (e) {
           reject(new Error('解析结果失败: ' + e.message));

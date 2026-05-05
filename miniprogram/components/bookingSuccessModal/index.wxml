@@ -4,7 +4,7 @@
       <view class="icon-circle">对</view>
     </view>
     <view class="success-title">预约成功</view>
-    <view class="success-desc">支付功能上线后将优先通知你</view>
+    <view class="success-desc">你已加入优先体验名单，功能开放后将第一时间通知你</view>
     <button class="success-btn" bindtap="onClose">我知道了</button>
   </view>
 </view>

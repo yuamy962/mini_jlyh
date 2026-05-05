@@ -6,14 +6,17 @@ Page({
     showSuccessModal: false,
     bookingCount: 1023,
     isBooked: false,
+    isUnlocked: false,
     problemsPreview: [],
-    problemsHidden: []
+    problemsHidden: [],
+    comparisons: [],
+    previewComparison: null
   },
 
   onLoad() {
     const app = getApp();
     const result = app.globalData.optimizeResult;
-    
+
     if (!result) {
       wx.showToast({ title: '暂无优化结果', icon: 'none' });
       setTimeout(() => { wx.navigateBack(); }, 1500);
@@ -25,20 +28,32 @@ Page({
       matchScore: result.matchScore || 0,
       optimizedResume: result.optimizedResume || '优化内容生成失败，请重试',
       problems: result.problems || [],
-      optimizationNotes: result.optimizationNotes || '暂无优化说明'
+      optimizationNotes: result.optimizationNotes || '暂无优化说明',
+      keyComparisons: result.keyComparisons || []
     };
 
     const problems = safeResult.problems;
     const problemsPreview = problems.slice(0, 2);
     const problemsHidden = problems.slice(2);
 
-    const isBooked = wx.getStorageSync('has_booked') || false;
+    // 解析对比高亮
+    const comparisons = (safeResult.keyComparisons || []).map(item => ({
+      ...item,
+      afterParts: this.parseHighlight(item.after)
+    }));
+    const previewComparison = comparisons.length > 0 ? comparisons[0] : null;
 
-    this.setData({ 
-      result: safeResult, 
-      problemsPreview, 
+    const isBooked = wx.getStorageSync('has_booked') || false;
+    const isUnlocked = result._unlocked || false;
+
+    this.setData({
+      result: safeResult,
+      problemsPreview,
       problemsHidden,
-      isBooked 
+      isBooked,
+      isUnlocked,
+      comparisons,
+      previewComparison
     });
 
     this.fetchBookingStats();
@@ -49,6 +64,15 @@ Page({
     if (isBooked !== this.data.isBooked) {
       this.setData({ isBooked });
     }
+  },
+
+  parseHighlight(text) {
+    if (!text) return [{ text: '', highlight: false }];
+    const parts = text.split(/【|】/);
+    return parts.map((part, index) => ({
+      text: part,
+      highlight: index % 2 === 1
+    }));
   },
 
   fetchBookingStats() {
@@ -89,7 +113,7 @@ Page({
   onBooking() {
     const app = getApp();
     app.trackEvent('click_book', 'result');
-    
+
     wx.cloud.callFunction({
       name: 'createReservation',
       data: { action: 'book', source: 'result' }
@@ -98,11 +122,18 @@ Page({
       if (result && result.success) {
         wx.setStorageSync('has_booked', true);
         app.updateUserTag('booked');
-        
-        this.setData({ 
+
+        // 解锁当前结果
+        const appInstance = getApp();
+        if (appInstance.globalData.optimizeResult) {
+          appInstance.globalData.optimizeResult._unlocked = true;
+        }
+
+        this.setData({
           showBookingModal: false,
           showSuccessModal: true,
           isBooked: true,
+          isUnlocked: true,
           bookingCount: result.totalCount || this.data.bookingCount + 1
         });
       } else {
@@ -118,7 +149,6 @@ Page({
     this.setData({ showSuccessModal: false });
   },
 
-  // 返回首页重新优化
   onReoptimize() {
     wx.navigateBack();
   }

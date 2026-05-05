@@ -1,7 +1,7 @@
 <view class="booking-mask" wx:if="{{visible}}" bindtap="onMaskTap">
   <view class="booking-modal" catchtap="onModalTap">
     <view class="modal-header">
-      <view class="modal-title">你的简历还有致命问题未修复</view>
+      <view class="modal-title">你的简历还有关键问题未修复</view>
       <view class="modal-subtitle">
         <text>当前简历很可能过不了筛选</text>
         <text>完整优化后可明显提升通过率</text>
@@ -13,11 +13,11 @@
         <view class="status-title">已完成</view>
         <view class="status-item">
           <view class="status-dot done-dot"></view>
-          <text>已优化前30%（基础优化）</text>
+          <text>基础优化（30%）</text>
         </view>
         <view class="status-item">
           <view class="status-dot done-dot"></view>
-          <text>已识别关键问题点</text>
+          <text>初步问题识别</text>
         </view>
       </view>
 
@@ -33,38 +33,26 @@
         </view>
       </view>
 
-      <view class="price-section">
-        <view class="price-label">正式版价格</view>
-        <view class="price-row">
-          <view class="price-item normal">
-            <text class="price-name">单次</text>
-            <text class="price-num">1.9元</text>
+      <view class="booking-info">
+        <view class="info-title">当前为内测阶段</view>
+        <view class="info-list">
+          <view class="info-item">
+            <view class="info-dot"></view>
+            <text>完成预约后优先解锁完整优化功能</text>
           </view>
-          <view class="price-divider"></view>
-          <view class="price-item recommend">
-            <view class="rec-badge">推荐</view>
-            <text class="price-name">全天</text>
-            <text class="price-num">6.9元</text>
-            <text class="rec-text">多数用户选择</text>
+          <view class="info-item">
+            <view class="info-dot"></view>
+            <text>第一时间开放使用</text>
           </view>
-        </view>
-      </view>
-
-      <view class="reward-section">
-        <view class="reward-title">预约用户上线后可获得</view>
-        <view class="reward-options">
-          <text class="reward-item">免费解锁1次</text>
-          <text class="reward-or">或</text>
-          <text class="reward-item">专属5折优惠</text>
+          <view class="info-item">
+            <view class="info-dot"></view>
+            <text>可持续使用优化能力</text>
+          </view>
         </view>
       </view>
 
       <view class="urgency-section">
         <text class="urgency-text">内测优惠即将结束（仅剩少量名额）</text>
-      </view>
-
-      <view class="behavior-hint">
-        <text>多数用户会优化2-3版简历，建议直接解锁全天使用</text>
       </view>
 
       <view class="social-proof">
@@ -74,7 +62,7 @@
 
     <view class="modal-footer">
       <button class="btn-primary" bindtap="onBooking">
-        <text>立即解锁完整优化</text>
+        <text>立即预约解锁</text>
       </button>
       <view class="btn-secondary" bindtap="onCancel">
         <text>再看看</text>

@@ -1,55 +1,171 @@
 <view class="container">
   <!-- 评分区域 -->
   <view class="score-section">
-    <view class="score-circle">
-      <text class="score-num">{{result.matchScore}}</text>
-      <text class="score-label">匹配度评分</text>
-    </view>
-    <view class="score-comment {{result.matchScore < 70 ? 'low' : result.matchScore < 85 ? 'mid' : 'high'}}">
-      <text wx:if="{{result.matchScore < 70}}">当前评分偏低，简历较难通过初筛</text>
-      <text wx:elif="{{result.matchScore < 85}}">匹配度尚可，仍有提升空间</text>
-      <text wx:else>匹配度较高，优化后可更具竞争力</text>
+    <!-- 锁定状态 -->
+    <block wx:if="{{!isUnlocked}}">
+      <view class="score-circle">
+        <text class="score-num">{{result.matchScore}}</text>
+        <text class="score-label">匹配度评分</text>
+      </view>
+      <view class="score-comment {{result.matchScore < 70 ? 'low' : result.matchScore < 85 ? 'mid' : 'high'}}">
+        <text wx:if="{{result.matchScore < 70}}">当前评分偏低，简历较难通过初筛</text>
+        <text wx:elif="{{result.matchScore < 85}}">匹配度尚可，仍有提升空间</text>
+        <text wx:else>匹配度较高，优化后可更具竞争力</text>
+      </view>
+    </block>
+
+    <!-- 解锁状态 -->
+    <block wx:if="{{isUnlocked}}">
+      <view class="score-unlocked">
+        <view class="score-main">{{result.matchScore}} 分</view>
+        <view class="score-label">匹配度评分</view>
+        <view class="score-status good">已达到面试推荐水平</view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 优化总结（解锁后显示） -->
+  <view wx:if="{{isUnlocked}}" class="section summary-section">
+    <view class="section-title">优化总结</view>
+    <view class="summary-list">
+      <view class="summary-item">
+        <view class="summary-dot done"></view>
+        <text>强化成果表达</text>
+      </view>
+      <view class="summary-item">
+        <view class="summary-dot done"></view>
+        <text>增加量化数据</text>
+      </view>
+      <view class="summary-item">
+        <view class="summary-dot done"></view>
+        <text>提升岗位匹配度</text>
+      </view>
     </view>
   </view>
 
-  <!-- 优化后简历（截断展示） -->
-  <view class="section">
-    <view class="section-hint">已根据目标岗位优化表达，更突出成果与匹配度</view>
-    <view class="section-title">优化后简历</view>
-    <view class="content-box resume-box">
-      <view class="resume-preview">
-        <text class="content-text">{{result.optimizedResume}}</text>
-      </view>
-      <view class="lock-overlay">
-        <view class="lock-icon">锁</view>
-        <view class="lock-title">还有关键优化未查看</view>
-        <view class="lock-desc">影响面试通过率，完整优化后可明显提升</view>
-        <view class="unlock-btn" bindtap="onUnlockResume">
-          <text>解锁完整优化</text>
+  <!-- 优化前后对比 -->
+  <view wx:if="{{previewComparison}}" class="section comparison-section">
+    <view class="section-title">简历优化预览</view>
+
+    <!-- 未解锁：只展示1条 + 截断 -->
+    <block wx:if="{{!isUnlocked}}">
+      <view class="comparison-card preview">
+        <view class="compare-row">
+          <view class="compare-label">原描述</view>
+          <view class="compare-before">{{previewComparison.before}}</view>
+        </view>
+        <view class="compare-arrow">↓</view>
+        <view class="compare-row">
+          <view class="compare-label">优化后</view>
+          <view class="compare-after preview-after">
+            <block wx:for="{{previewComparison.afterParts}}" wx:key="index">
+              <text wx:if="{{!item.highlight}}" class="after-normal">{{item.text}}</text>
+              <text wx:if="{{item.highlight}}" class="after-highlight">{{item.text}}</text>
+            </block>
+          </view>
         </view>
       </view>
-    </view>
+      <view class="preview-lock">
+        <view class="preview-lock-text">完整优化内容已锁定</view>
+        <view wx:if="{{comparisons.length > 1}}" class="preview-lock-sub">还有 {{comparisons.length - 1}} 条关键优化未查看（影响面试通过率）</view>
+        <view class="preview-hint">完整优化后，可明显提升通过率</view>
+        <view class="unlock-btn-inline" bindtap="onUnlockResume">解锁完整优化</view>
+      </view>
+    </block>
+
+    <!-- 解锁后：展示全部对比 -->
+    <block wx:if="{{isUnlocked}}">
+      <view class="comparison-list">
+        <view class="comparison-card" wx:for="{{comparisons}}" wx:key="index">
+          <view class="compare-row">
+            <view class="compare-label">原描述</view>
+            <view class="compare-before">{{item.before}}</view>
+          </view>
+          <view class="compare-arrow">↓</view>
+          <view class="compare-row">
+            <view class="compare-label">优化后</view>
+            <view class="compare-after">
+              <block wx:for="{{item.afterParts}}" wx:for-item="part" wx:for-index="pidx" wx:key="pidx">
+                <text wx:if="{{!part.highlight}}" class="after-normal">{{part.text}}</text>
+                <text wx:if="{{part.highlight}}" class="after-highlight">{{part.text}}</text>
+              </block>
+            </view>
+          </view>
+          <view wx:if="{{item.explanation}}" class="compare-explanation">
+            <text class="exp-label">优化说明：</text>
+            <text class="exp-text">{{item.explanation}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
   </view>
 
-  <!-- 存在问题（仅展示2条） -->
+  <!-- 优化后简历 -->
+  <view class="section">
+    <view wx:if="{{!isUnlocked}}" class="section-hint">已根据目标岗位优化表达，更突出成果与匹配度</view>
+    <view class="section-title">优化后简历</view>
+
+    <!-- 锁定状态 -->
+    <block wx:if="{{!isUnlocked}}">
+      <view class="content-box resume-box">
+        <view class="resume-preview">
+          <text class="content-text">{{result.optimizedResume}}</text>
+        </view>
+        <view class="lock-overlay">
+          <view class="lock-icon">锁</view>
+          <view class="lock-title">还有关键优化未查看</view>
+          <view class="lock-desc">影响面试通过率，完整优化后可明显提升</view>
+          <view class="unlock-btn" bindtap="onUnlockResume">
+            <text>解锁完整优化</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 解锁状态 -->
+    <block wx:if="{{isUnlocked}}">
+      <view class="content-box resume-full">
+        <text class="content-text">{{result.optimizedResume}}</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 存在问题 -->
   <view class="section">
     <view class="section-title">
       存在问题
-      <text class="count-badge" wx:if="{{problemsHidden.length > 0}}">展示 2/{{result.problems.length}}</text>
+      <text wx:if="{{!isUnlocked && problemsHidden.length > 0}}" class="count-badge">展示 2/{{result.problems.length}}</text>
+      <text wx:if="{{isUnlocked}}" class="count-badge">共 {{result.problems.length}} 条</text>
     </view>
-    <view class="problem-list">
-      <view class="problem-item" wx:for="{{problemsPreview}}" wx:key="index">
-        <view class="problem-header">
-          <view class="problem-tag">{{item.type}}</view>
+
+    <!-- 锁定状态 -->
+    <block wx:if="{{!isUnlocked}}">
+      <view class="problem-list">
+        <view class="problem-item" wx:for="{{problemsPreview}}" wx:key="index">
+          <view class="problem-header">
+            <view class="problem-tag">{{item.type}}</view>
+          </view>
+          <text class="problem-desc">{{item.description}}</text>
         </view>
-        <text class="problem-desc">{{item.description}}</text>
       </view>
-    </view>
-    <view class="more-problems" wx:if="{{problemsHidden.length > 0}}" bindtap="onMoreProblems">
-      <view class="more-icon">!</view>
-      <text>还有 {{problemsHidden.length}} 个关键问题未查看（可能直接影响面试结果）</text>
-      <text class="more-arrow">›</text>
-    </view>
+      <view wx:if="{{problemsHidden.length > 0}}" class="more-problems" bindtap="onMoreProblems">
+        <view class="more-icon">!</view>
+        <text>还有 {{problemsHidden.length}} 个关键问题未查看（可能直接影响面试结果）</text>
+        <text class="more-arrow">›</text>
+      </view>
+    </block>
+
+    <!-- 解锁状态 -->
+    <block wx:if="{{isUnlocked}}">
+      <view class="problem-list">
+        <view class="problem-item" wx:for="{{result.problems}}" wx:key="index">
+          <view class="problem-header">
+            <view class="problem-tag">{{item.type}}</view>
+          </view>
+          <text class="problem-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </block>
   </view>
 
   <!-- 优化说明 -->
@@ -59,18 +175,18 @@
       <text class="content-text">{{result.optimizationNotes}}</text>
     </view>
   </view>
+
+  <!-- 复用引导（解锁后显示） -->
+  <view wx:if="{{isUnlocked}}" class="section reuse-section">
+    <view class="reuse-title">再优化一版简历</view>
+    <view class="reuse-desc">建议针对不同岗位分别优化，多数用户会优化2-3版</view>
+    <view class="reuse-btn" bindtap="onReoptimize">立即再优化</view>
+  </view>
 </view>
 
 <!-- 预约弹窗 -->
-<booking-modal 
-  visible="{{showBookingModal}}" 
-  bookingCount="{{bookingCount}}"
-  bind:close="onCloseBookingModal"
-  bind:confirm="onBooking"
-/>
+<booking-modal visible="{{showBookingModal}}" bookingCount="{{bookingCount}}" bind:close="onCloseBookingModal"
+  bind:confirm="onBooking" />
 
 <!-- 预约成功弹窗 -->
-<booking-success-modal 
-  visible="{{showSuccessModal}}"
-  bind:close="onCloseSuccessModal"
-/>
+<booking-success-modal visible="{{showSuccessModal}}" bind:close="onCloseSuccessModal" />
