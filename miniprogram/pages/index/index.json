@@ -1,6 +1,5 @@
 {
   "usingComponents": {
-    "cloud-tip-modal": "/components/cloudTipModal/index",
     "booking-modal": "/components/bookingModal/index",
     "booking-success-modal": "/components/bookingSuccessModal/index"
   }
