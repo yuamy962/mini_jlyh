@@ -149,6 +149,27 @@ Page({
     this.setData({ showSuccessModal: false });
   },
 
+  copyResume() {
+    wx.showModal({
+      title: '内容确认',
+      content: '请确认简历内容真实准确，建议根据实际情况调整后再使用',
+      confirmText: '确认复制',
+      showCancel: false,
+      success: () => {
+        wx.setClipboardData({
+          data: this.data.result.optimizedResume,
+          success: () => {
+            wx.showToast({
+              title: '已复制，建议调整后使用',
+              icon: 'none',
+              duration: 2000
+            });
+          }
+        });
+      }
+    });
+  },
+
   onReoptimize() {
     wx.navigateBack();
   }

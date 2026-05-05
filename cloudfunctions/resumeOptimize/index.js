@@ -52,20 +52,63 @@ const MOCK_RESULT = {
   ]
 };
 
+// 文本清洗：移除 emoji、零宽字符、Markdown 标记等可能导致乱码的内容
+function sanitizeText(text) {
+  if (!text || typeof text !== 'string') return '';
+  return text
+    // 移除所有 emoji（各种 Unicode emoji 范围）
+    .replace(/([\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{1F800}-\u{1F8FF}]|[\u{2B00}-\u{2BFF}])/gu, '')
+    // 移除零宽字符和控制字符
+    .replace(/[\u200B-\u200F\uFEFF\u2028\u2029\u00AD]/g, '')
+    // 移除替换字符（黑色菱形问号）
+    .replace(/\uFFFD/g, '')
+    // 移除 Markdown 加粗标记 **
+    .replace(/\*\*/g, '')
+    .trim();
+}
+
+// 深度清洗对象中的所有文本字段
+function sanitizeResult(result) {
+  if (!result) return result;
+  
+  // 清洗顶层文本字段
+  result.optimizedResume = sanitizeText(result.optimizedResume);
+  result.optimizationNotes = sanitizeText(result.optimizationNotes);
+  
+  // 清洗 problems 数组
+  if (Array.isArray(result.problems)) {
+    result.problems = result.problems.map(p => ({
+      type: sanitizeText(p.type),
+      description: sanitizeText(p.description)
+    }));
+  }
+  
+  // 清洗 keyComparisons 数组
+  if (Array.isArray(result.keyComparisons)) {
+    result.keyComparisons = result.keyComparisons.map(c => ({
+      before: sanitizeText(c.before),
+      after: sanitizeText(c.after),
+      explanation: sanitizeText(c.explanation)
+    }));
+  }
+  
+  return result;
+}
+
 function callDeepSeekAPI(jobTitle, resumeContent) {
   return new Promise((resolve, reject) => {
     const systemPrompt = `你是一位资深 HR 和简历优化专家，擅长帮助求职者提升简历通过率。请根据用户提供的岗位名称和简历内容，进行专业优化。
 
-请严格按照以下 JSON 格式返回结果，不要包含任何其他文字或 markdown 标记：
+请严格按照以下 JSON 格式返回结果，不要包含任何其他文字：
 {
   "matchScore": 0-100的数字,
-  "optimizedResume": "优化后的完整简历内容，使用Markdown格式",
+  "optimizedResume": "优化后的完整简历内容（纯文本，不要Markdown格式）",
   "problems": [
     {"type": "空话套话", "description": "具体问题描述"},
     {"type": "无成果", "description": "具体问题描述"},
     {"type": "被质疑点", "description": "具体问题描述"}
   ],
-  "optimizationNotes": "优化说明，简要说明优化了哪些方面",
+  "optimizationNotes": "优化说明（纯文本）",
   "keyComparisons": [
     {
       "before": "原文中的典型句子",
@@ -77,10 +120,11 @@ function callDeepSeekAPI(jobTitle, resumeContent) {
 
 要求：
 1. matchScore：根据简历与岗位的匹配度给出 0-100 的评分
-2. optimizedResume：对原简历进行优化重写，使其更具成果导向，去除空话套话，量化成果，保留核心经历
-3. problems：至少找出 3-5 个关键问题，每个问题包含 type（问题类型：空话套话/无成果/被质疑点/成果强化）和 description（具体描述，指出问题并给出改进建议）
-4. optimizationNotes：简要总结优化思路和核心改进点
-5. keyComparisons：返回2-3个最具代表性的优化前后对比，每个对比包含 before（原文）、after（优化后，用【】包裹高亮内容）、explanation（优化说明）`;
+2. optimizedResume：对原简历进行优化重写，使其更具成果导向，去除空话套话，量化成果，保留核心经历。必须使用纯文本，不要包含任何 emoji、特殊符号、Markdown 格式标记（如 **、##、> 等）
+3. problems：至少找出 3-5 个关键问题，每个问题包含 type（问题类型：空话套话/无成果/被质疑点/成果强化）和 description（具体描述，指出问题并给出改进建议）。description 中不要包含 emoji 和特殊符号
+4. optimizationNotes：简要总结优化思路和核心改进点，纯文本，不要 emoji
+5. keyComparisons：返回2-3个最具代表性的优化前后对比，每个对比包含 before（原文）、after（优化后，用【】包裹高亮内容）、explanation（优化说明）。所有字段均为纯文本，不要 emoji`;
+
 
     const userPrompt = `岗位名称：${jobTitle}\n\n简历内容：\n${resumeContent}`;
 
@@ -116,7 +160,9 @@ function callDeepSeekAPI(jobTitle, resumeContent) {
             return;
           }
           const content = response.choices[0].message.content;
-          const result = JSON.parse(content);
+          let result = JSON.parse(content);
+          // 清洗所有文本字段，移除可能导致乱码的字符
+          result = sanitizeResult(result);
           resolve({
             matchScore: result.matchScore || 75,
             optimizedResume: result.optimizedResume || '',
@@ -161,7 +207,7 @@ exports.main = async (event, context) => {
       console.log('[MOCK] 未配置 DEEPSEEK_API_KEY，返回模拟数据');
       // 模拟 API 延迟
       await new Promise(r => setTimeout(r, 1500));
-      result = MOCK_RESULT;
+      result = sanitizeResult({ ...MOCK_RESULT });
     } else {
       result = await callDeepSeekAPI(jobTitle, resumeContent);
     }

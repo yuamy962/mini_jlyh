@@ -97,6 +97,10 @@
           </view>
         </view>
       </view>
+      <view class="comparison-warning">
+        <text class="warning-dot">!</text>
+        <text class="warning-text">部分量化数据为优化建议，请根据实际情况调整</text>
+      </view>
     </block>
   </view>
 
@@ -126,6 +130,12 @@
     <block wx:if="{{isUnlocked}}">
       <view class="content-box resume-full">
         <text class="content-text">{{result.optimizedResume}}</text>
+      </view>
+      <view class="copy-section">
+        <view class="copy-btn" bindtap="copyResume">
+          <text>一键复制简历</text>
+        </view>
+        <view class="copy-hint">建议粘贴到Word后微调格式再投递</view>
       </view>
     </block>
   </view>
