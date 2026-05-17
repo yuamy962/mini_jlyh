@@ -11,7 +11,12 @@ Page({
     showBookingModal: false,
     showSuccessModal: false,
     bookingCount: 1023,
-    isBooked: false
+    isBooked: false,
+    pdfUploading: false,
+    pdfUploadStatus: '',
+    pdfParsed: false,
+    pdfFileName: '',
+    parsedPageCount: 0
   },
 
   onLoad() {
@@ -92,6 +97,107 @@ Page({
       fail: () => {
         wx.showToast({ title: '无法读取剪贴板', icon: 'none' });
       }
+    });
+  },
+
+  // 选择并上传PDF简历
+  onUploadPdf() {
+    if (this.data.pdfUploading) return;
+
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['pdf'],
+      success: (res) => {
+        const file = res.tempFiles[0];
+        if (!file || !file.name.toLowerCase().endsWith('.pdf')) {
+          wx.showToast({ title: '请选择PDF文件', icon: 'none' });
+          return;
+        }
+        this.uploadAndParsePdf(file);
+      },
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.includes('cancel')) {
+          // 用户取消，不做处理
+          return;
+        }
+        console.error('选择文件失败', err);
+        wx.showToast({ title: '选择文件失败', icon: 'none' });
+      }
+    });
+  },
+
+  // 上传PDF到云存储并解析
+  uploadAndParsePdf(file) {
+    this.setData({
+      pdfUploading: true,
+      pdfUploadStatus: '正在上传...',
+      pdfParsed: false
+    });
+
+    const cloudPath = `resumes/${Date.now()}_${Math.random().toString(36).slice(2)}_${file.name}`;
+
+    wx.cloud.uploadFile({
+      cloudPath,
+      filePath: file.path,
+      success: (uploadRes) => {
+        const fileID = uploadRes.fileID;
+        this.setData({ pdfUploadStatus: '正在识别文字...' });
+        this.parsePdfText(fileID, file.name);
+      },
+      fail: (err) => {
+        console.error('上传失败', err);
+        this.setData({ pdfUploading: false });
+        wx.showToast({ title: '上传失败，请重试', icon: 'none' });
+      }
+    });
+  },
+
+  // 调用云函数解析PDF文字
+  parsePdfText(fileID, fileName) {
+    wx.cloud.callFunction({
+      name: 'parseResume',
+      data: { fileID }
+    }).then(res => {
+      const result = res.result;
+      this.setData({ pdfUploading: false });
+
+      if (result.success) {
+        const text = result.data.text || '';
+        const pageCount = result.data.pageCount || 1;
+
+        this.setData({
+          resumeContent: text,
+          contentLength: text.length,
+          pdfParsed: true,
+          pdfFileName: fileName,
+          parsedPageCount: pageCount
+        });
+        this.updateWordCountHint(text.length);
+        this.checkCanSubmit();
+
+        wx.showToast({
+          title: `已识别 ${pageCount} 页 · ${text.length} 字`,
+          icon: 'none',
+          duration: 2000
+        });
+      } else {
+        wx.showModal({
+          title: '识别失败',
+          content: result.message || '无法解析该PDF，请尝试手动粘贴简历内容',
+          showCancel: false,
+          confirmText: '我知道了'
+        });
+      }
+    }).catch(err => {
+      console.error('解析失败', err);
+      this.setData({ pdfUploading: false });
+      wx.showModal({
+        title: '识别失败',
+        content: '网络异常，无法解析PDF，请尝试手动粘贴',
+        showCancel: false,
+        confirmText: '我知道了'
+      });
     });
   },
 

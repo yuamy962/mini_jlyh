@@ -19,6 +19,21 @@
 
     <view class="form-item">
       <view class="label">简历内容 <text class="required">*</text></view>
+
+      <!-- PDF上传区域 -->
+      <view class="upload-section" bindtap="onUploadPdf">
+        <view class="upload-box {{pdfUploading ? 'uploading' : ''}} {{pdfParsed ? 'parsed' : ''}}">
+          <view class="upload-icon">📄</view>
+          <view class="upload-text">
+            <text wx:if="{{pdfUploading}}">{{pdfUploadStatus}}</text>
+            <text wx:elif="{{pdfParsed}}">{{pdfFileName}} · 已识别 {{parsedPageCount}} 页 · {{contentLength}} 字</text>
+            <text wx:else>上传PDF简历，自动识别内容</text>
+          </view>
+          <view class="upload-hint" wx:if="{{!pdfUploading && !pdfParsed}}">支持从微信聊天记录选择</view>
+          <view class="upload-hint" wx:if="{{pdfParsed}}">点击可重新上传</view>
+        </view>
+      </view>
+
       <view class="textarea-wrap">
         <textarea 
           class="textarea" 

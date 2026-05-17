@@ -69,6 +69,61 @@ page {
   box-sizing: border-box;
 }
 
+/* PDF上传区域 */
+.upload-section {
+  margin-bottom: 20rpx;
+}
+
+.upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 32rpx;
+  border: 2rpx dashed #c7d2fe;
+  border-radius: 16rpx;
+  background: #eef2ff;
+  transition: all 0.2s;
+}
+
+.upload-box:active {
+  background: #e0e7ff;
+}
+
+.upload-box.uploading {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.upload-box.parsed {
+  border-style: solid;
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.upload-icon {
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+}
+
+.upload-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2563eb;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.upload-box.parsed .upload-text {
+  color: #16a34a;
+}
+
+.upload-hint {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #9ca3af;
+}
+
 /* textarea 容器 */
 .textarea-wrap {
   position: relative;
@@ -152,21 +207,23 @@ page {
 
 /* 主按钮 */
 .submit-btn {
-  margin-top: 8rpx;
-  height: 96rpx;
-  line-height: 96rpx;
-  background: #d1d5db;
-  color: #fff;
-  font-size: 32rpx;
+  margin-top: 48rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 34rpx;
   font-weight: 700;
-  border-radius: 48rpx;
-  border: none;
+  border-radius: 50rpx;
+  border: 2rpx solid #d1d5db;
   letter-spacing: 2rpx;
 }
 
 .submit-btn.active {
   background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  box-shadow: 0 12rpx 32rpx rgba(37, 99, 235, 0.35);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 16rpx 40rpx rgba(37, 99, 235, 0.45);
 }
 
 .submit-btn::after {
@@ -180,7 +237,7 @@ page {
   justify-content: center;
   margin-top: 20rpx;
   font-size: 24rpx;
-  color: #d1d5db;
+  color: #9ca3af;
 }
 
 /* 底部标签 */
