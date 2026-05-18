@@ -69,7 +69,7 @@
         <view class="preview-lock-text">完整优化内容已锁定</view>
         <view wx:if="{{comparisons.length > 1}}" class="preview-lock-sub">还有 {{comparisons.length - 1}} 条关键优化未查看（影响面试通过率）</view>
         <view class="preview-hint">完整优化后，可明显提升通过率</view>
-        <view class="unlock-btn-inline" bindtap="onUnlockResume">解锁完整优化</view>
+        <view class="unlock-btn-inline" bindtap="onUnlockResume">查看完整优化</view>
       </view>
     </block>
 
@@ -120,7 +120,7 @@
           <view class="lock-title">还有关键优化未查看</view>
           <view class="lock-desc">影响面试通过率，完整优化后可明显提升</view>
           <view class="unlock-btn" bindtap="onUnlockResume">
-            <text>解锁完整优化</text>
+            <text>查看完整优化</text>
           </view>
         </view>
       </view>
